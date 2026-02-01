@@ -43,3 +43,11 @@ Thumbs.db
 .pytest_cache/
 htmlcov/
 .coverage
+
+# Report templates and unnecessary files
+Report/template.*
+Report/*.eps
+Report/*.pdf
+Report/makefile
+Report/vgtc.cls
+Report/abbrv-*.bst
