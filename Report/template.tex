@@ -1,0 +1,383 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{multirow}
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.022em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{Visualization Tool for Energy Analysts using CIA Dataset}
+\author{
+    Harshavardhan Dharman\\
+    \scriptsize Eindhoven University of Technology\\
+    \scriptsize h.dharman@student.tue.nl
+\and
+    Surya Kannan\\
+    \scriptsize Eindhoven University of Technology\\
+    \scriptsize s.kannan@student.tue.nl
+\and
+    Shashank Venkatesha\\
+    \scriptsize Eindhoven University of Technology\\
+    \scriptsize s.venkatesha@student.tue.nl
+\and
+    Leela Karthikeyan Haribabu\\
+    \scriptsize Eindhoven University of Technology\\
+    \scriptsize l.k.haribabu@student.tue.nl
+}
+
+
+
+\maketitle
+
+\begin{abstract}
+\textcolor{blue}{The Energy Analytics Visualization Tool is an interactive exploration platform specifically designed to provide energy analysts with a unified environment for cross-sectoral discovery and infrastructure assessment.} By integrating five multidisciplinary datasets, the tool enables the analyst to transition seamlessly from geographic overviews to deep multivariate profiling using Coordinated Multiple Views, such as Choropleth Maps, Top-N Rankings, and PCA Cluster plots that reveal hidden peer groups of nations with shared industrial footprints. This design prioritizes "details-on-demand," allowing the user to investigate how physical assets like pipelines and generating capacity drive economic output while highlighting critical structural dependencies essential for policy mapping. The tool's statistical engine identifies a perfect 1.00 correlation between Total Area and Land Area, alongside exceptionally high correlations between Real GDP and national Imports, confirming the linear scaling of territorial and economic resources. Conversely, it exposes strategic resource trade-offs and land-use tensions for the analyst, most notably a significant low correlation of -0.35 between Agricultural Land and Forest Land. By exposing these high and low correlation values through interactive Parallel Coordinates and heatmaps, the platform empowers the energy analyst to pinpoint "efficiency frontiers" where nations optimize resource allocation. Ultimately, this visualization environment exposes complex industrial interdependencies that traditional, static statistical models often obscure, providing the analyst with a dynamic tool for evidence-based decision-making.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Energy Analytics, Information Visualization, Multivariate Profiling, Infrastructure Assessment, PCA Clustering.
+\end{IEEEkeywords}
+
+\section{Introduction}
+\subsection{Motivation and Domain Problem}
+In an era of unparalleled global interconnection, there is a challenge in understanding the complex relationships between energy production, economic development, infrastructure, and environmental sustainability across all countries. Traditional statistical tables and reports fail to reveal the nuanced patterns, regional clusters, and multi-dimensional correlations that drive the interdependent link between energy usage and economic growth. The primary domain goal for the energy analyst is to understand how physical energy infrastructure, such as generating capacity and pipelines, correlates with economic health, and to identify patterns such as "high GDP but high carbon intensity" or "expanding infrastructure combined with low energy equity." Current approaches like spreadsheets and static reports make it hard to see these patterns; interactive visualization is well-suited because it leverages spatial position, color, and length as highly effective perceptual channels for comparison and pattern finding.
+
+\subsection{Target Users and Goals}
+\textbf{Target User:} The primary user of this tool is the Energy Analyst tasked with synthesizing complex, multi-sector data to guide infrastructure planning and policy decisions.
+
+\textbf{Project Goals:} The primary goal is to facilitate Exploration and Analysis by allowing the analyst to investigate how energy mixes and transport networks support population growth while driving national economic health. Through interactive features like PCA clustering, the tool enables the user to identify "peer nations" with similar industrial footprints. Ultimately, the visualization tool allows the analyst to pinpoint "connectivity gaps" and discover "positive deviants" who successfully decouple economic growth from high environmental impact.
+
+\subsection{Why Visualization?}
+Visualization is the superior choice because it transforms abstract numbers into actionable spatial and relational patterns. While automated statistical methods can provide summaries, they often operate as "black boxes" that hide nuanced outliers. For the Energy Analyst, a visual interface facilitates Human-in-the-loop Discovery, allowing the user to spot geographic trends through Choropleth Maps. Furthermore, visualization excels at Multivariate Profiling. By using interactive tools like Parallel Coordinates and PCA Cluster plots, the user can "brush" through data to instantly see how different indicators interact. This empowers the analyst to detect "efficiency frontiers" that static algorithmic outputs simply cannot achieve.
+
+\section{Data Analysis}
+
+\subsection{Domain Data Specification}
+The visualization utilizes the CIA World Factbook, a comprehensive dataset containing statistical profiles for over 200 countries at the intersection of infrastructure and macroeconomics. Nations are analyzed through five key dimensions:
+
+\textbf{Energy:} Quantifies resource footprints through electricity access, generating capacity, and fossil fuel metrics (coal, gas, petroleum). $CO_2$ emissions are included to evaluate industrial sustainability.
+
+
+\textbf{Economy:} Measures financial health and industrial scale using absolute values like Real GDP (PPP) and Trade Volume (Exports/Imports), alongside GDP per Capita for relative prosperity.
+
+
+\textbf{Demographics:} Uses Total Population as the primary metric to contextualize energy demand and the scale of required infrastructure.
+
+
+\textbf{Transportation:} Focuses on physical connectivity via gas and oil pipeline mileage (km), reflecting the technological maturity of a nation’s distribution networks.
+
+
+\textbf{Geography:} Defines the physical context through Total/Land Area and land-use types like Forest and Agricultural Land to assess resource potential and spatial constraints.
+
+In our approach, we have synthesized a multi-domain dataset by merging five distinct categories of country-level indicators: Energy, Economy, Demographics, Transportation, and Geography. Each observation in the final processed dataset represents a sovereign state, identified by its unique ISO-Alpha 3 code. To ensure global coverage and facilitate spatial visualization, we performed a name-matching operation between the CIA World Factbook records and the Gapminder ISO database, resolving nomenclature discrepancies (e.g., mapping "Czechia" to the "Czech Republic" to maintain consistency across historical and modern records).
+
+\subsection{Data Abstraction}
+The energy dataset is abstracted according to Munzner's data model framework, as shown in Table~\ref{tab:data_abstraction}
+
+\textcolor{blue}{
+\begin{table}[H]
+\centering
+\caption{Unified Dataset Abstraction (21 Indicators across 5 Categories)}
+\label{tab:data_abstraction}
+\small
+\begin{tabular}{|p{0.8cm}|p{3.2cm}|p{1.4cm}|p{1.0cm}|p{1.2cm}|}
+\hline
+\textbf{Cat.} & \textbf{Attribute} & \textbf{Semantic} & \textbf{Type} & \textbf{Range} \\
+\hline
+\multirow{9}{*}{\rotatebox{90}{Energy}} 
+& electricity\_access\_percent & Quantitative & Ratio & 0--100\% \\
+& elec\_generating\_capacity\_kW & Quantitative & Ratio & 0--2.38B \\
+& coal\_metric\_tons & Quantitative & Ratio & 0--3.69B \\
+& petroleum\_bbl\_per\_day & Quantitative & Ratio & 0--18.6M \\
+& refined\_petrol\_products & Quantitative & Ratio & 0--20.3M \\
+& refined\_petrol\_exports & Quantitative & Ratio & 0--5.92M \\
+& refined\_petrol\_imports & Quantitative & Ratio & 0--2.19M \\
+& natural\_gas\_cubic\_m & Quantitative & Ratio & 0--967B \\
+& carbon\_dioxide\_emissions & Quantitative & Ratio & 0--11.5B Mt \\
+\hline
+\multirow{4}{*}{\rotatebox{90}{Economy}} 
+& Real GDP (PPP) & Quantitative & Ratio & 0--23T \\
+& GDP per Capita & Quantitative & Ratio & 0--115K \\
+& Exports (B USD) & Quantitative & Ratio & 0--3,527 \\
+& Imports (B USD) & Quantitative & Ratio & 0--3,401 \\
+\hline
+Demo & Total Population & Quantitative & Absolute & 0--1.42B \\
+\hline
+\multirow{2}{*}{\rotatebox{90}{Trans}} 
+& Gas Pipelines (km) & Quantitative & Ratio & 0--175K \\
+& Oil Pipelines (km) & Quantitative & Ratio & 0--91K \\
+\hline
+\multirow{5}{*}{\rotatebox{90}{Geo}} 
+& Total Area (sq km) & Quantitative & Ratio & 0--17.1M \\
+& Land Area (sq km) & Quantitative & Ratio & 0--16.4M \\
+& Coastline (km) & Quantitative & Ratio & 0--202K \\
+& Forest Land (\%) & Quantitative & Ratio & 0--98\% \\
+& Agricultural Land (\%) & Quantitative & Ratio & 0--97\% \\
+\hline
+\multicolumn{5}{|l|}{\textit{Derived Attributes:}} \\
+\hline
+& iso\_alpha & Categorical & Key & 200+ \\
+& continent & Categorical & Ordered & 6 cats \\
+\hline
+\end{tabular}
+\end{table}
+}
+
+\section{Task Analysis}
+
+\textcolor{blue}{\subsection{Hierarchical Task Structure}
+Following Munzner's recommendation, we organize tasks hierarchically from high-level goals to low-level actions:}
+
+\textcolor{blue}{
+\textbf{High-Level Task: Understand Global Energy-Economy Relationships}
+\begin{itemize}
+    \item \textbf{Goal}: Synthesize cross-sectoral patterns to inform policy decisions
+    \item \textbf{Approach}: Explore correlations between energy infrastructure and economic output
+\end{itemize}
+}
+
+\textcolor{blue}{
+\textbf{Mid-Level Tasks} (derived from high-level goal):
+\begin{enumerate}
+    \item \textbf{Discover Regional Patterns}: Identify geographic clusters of energy access or emissions
+    \item \textbf{Compare Country Profiles}: Contrast nations with different energy strategies
+    \item \textbf{Correlate Indicators}: Find relationships between economic and energy metrics
+    \item \textbf{Identify Outliers}: Detect countries that deviate from expected patterns
+\end{enumerate}
+}
+
+\textcolor{blue}{
+\textbf{Low-Level Tasks} (atomic actions supporting mid-level tasks):
+\begin{itemize}
+    \item \textbf{Lookup}: Retrieve exact value for a specific country-indicator pair via hover tooltip
+    \item \textbf{Locate}: Find a specific country's position on the geographic map
+    \item \textbf{Filter}: Narrow view to a specific continent using the dropdown selector
+    \item \textbf{Select}: Click to highlight a country, propagating across all linked views
+    \item \textbf{Browse}: Scan through multiple countries using parallel coordinates brushing
+    \item \textbf{Compare}: Examine two or more countries side-by-side in scatter plots
+    \item \textbf{Annotate}: Identify outliers through visual inspection of extreme positions
+    \item \textbf{Summarize}: View aggregate statistics (mean, max, min) in KPI cards
+\end{itemize}
+}
+
+\subsection{Domain-Specific Tasks}
+\textbf{Task 1: Analyze Environmental Impact and Global Emissions}
+\begin{itemize}
+    \item \textbf{Description}: Identifying drivers of greenhouse gas emissions by analyzing $CO_{2}$ output in relation to industrial scale.
+    \item \textbf{Why it matters}: Monitoring carbon footprints is essential for assessing global climate policy and identifying heavy polluters.
+    \item \textbf{Questions}: Who are the leading global carbon emitters? Which countries contribute most to global $CO_{2}$ emissions? Is there a correlation between electricity capacity and carbon output?
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{image.png}
+    \caption{CO2 Emissions Mt}
+    \label{fig:co2}
+\end{figure}
+
+\textbf{Task 2: Correlate Economic Wealth and Energy Access}
+\begin{itemize}
+    \item \textbf{Description}: Investigating if wealth alone is a sufficient driver for infrastructure.
+    \item \textbf{Questions}: Does economic wealth guarantee energy access? Is there a strong correlation between $GDP$ per capita and electricity access?
+    \item \textbf{Insight}: Moderate correlation (0.46). Higher GDP helps, but policy and geography are equally critical.
+\end{itemize}
+
+\textbf{Task 3: Analyze Carbon Intensity and Economic Efficiency}
+\begin{itemize}
+    \item \textbf{Description}: Evaluating efficiency by calculating $CO_{2}$ emissions relative to GDP.
+    \item \textbf{Questions}: Which economies are the most ``Carbon Intensive''? Who emits the most relative to economic output?
+    \item \textbf{Insight}: China and Russia lead major economies. Small island nations show high ratios due to fossil fuel import reliance.
+\end{itemize}
+
+
+
+\textcolor{blue}{\subsection{Task Abstraction}
+Mapping domain tasks to generic action-target pairs following Munzner's framework~\cite{munzner2014}.}
+
+\begin{table}[h]
+\centering
+\caption{Task Abstraction: Mapping Domain Tasks to Abstract Actions}
+\label{tab:task_abstraction}
+\small
+\begin{tabular}{|p{1.8cm}|p{1.8cm}|p{1.5cm}|p{2.0cm}|}
+\hline
+\textbf{Domain Task} & \textbf{Action} & \textbf{Target} & \textbf{Idiom Support} \\
+\hline
+Discover spatial patterns & Discover & Distribution & Choropleth Map \\
+\hline
+Generate hypotheses & Discover & Dependency & Scatter Plot \\
+\hline
+Characterize profiles & Derive & Outliers & PCA + K-Means \\
+\hline
+Compare countries & Compare & Features & Bar Chart \\
+\hline
+Correlate attributes & Identify & Correlation & Scatter Plot, Heatmap \\
+\hline
+Identify extremes & Identify & Extremes & Bar Chart (Top-N) \\
+\hline
+Lookup value & Lookup & One Value & Hover Tooltip \\
+\hline
+Locate country & Locate & Features & Geographic Map \\
+\hline
+Browse attributes & Browse & Features & Parallel Coordinates \\
+\hline
+\textcolor{blue}{Summarize statistics} & \textcolor{blue}{Summarize} & \textcolor{blue}{Distribution} & \textcolor{blue}{KPI Cards} \\
+\hline
+\textcolor{blue}{Filter by attribute} & \textcolor{blue}{Query} & \textcolor{blue}{Features} & \textcolor{blue}{Brushing} \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Visualization Design (HOW)}
+
+\textcolor{blue}{\subsection{Idiom Justification}
+Each visualization idiom was selected based on task requirements and Munzner's effectiveness principles. Table~\ref{tab:idiom_justification} provides the rationale for each choice.}
+
+\textcolor{blue}{
+\begin{table}[H]
+\centering
+\caption{Idiom Justification: Why Each Visualization Was Chosen}
+\label{tab:idiom_justification}
+\small
+\begin{tabular}{|p{2.0cm}|p{2.2cm}|p{2.0cm}|p{1.8cm}|}
+\hline
+\textbf{Idiom} & \textbf{Task Supported} & \textbf{Why Chosen} & \textbf{Alternative} \\
+\hline
+Choropleth Map & Discover spatial patterns & Geographic position reveals regional clusters & Cartogram (distorts area) \\
+\hline
+Bar Chart & Compare/Rank countries & Length is highly effective for magnitude & Dot plot (less familiar) \\
+\hline
+Scatter Plot & Find correlations & Position on X/Y shows bivariate relationships & Heatmap (loses individual points) \\
+\hline
+Parallel Coords & Browse multivariate data & Shows all dimensions simultaneously & Radar chart (limited items) \\
+\hline
+PCA + K-Means & Derive clusters & Dimensionality reduction reveals groupings & t-SNE (less interpretable) \\
+\hline
+Correlation Matrix & Identify correlations & Color encodes pairwise relationships & Scagnostics (complex) \\
+\hline
+SPLOM & Explore pairwise relations & Multiple scatter plots in matrix form & Glyphs (harder to read) \\
+\hline
+\end{tabular}
+\end{table}
+}
+
+\subsection{Visual Channel Selection}
+Our visual encodings follow Munzner's effectiveness rankings for quantitative data. Position is the most effective channel and is used in scatter plots for X and Y axes, in the PCA embedding, and in the choropleth map for spatial location. Length is used in bar charts for ranking comparison. Color saturation and hue are used in the choropleth with a Blues scale for sequential data, in the correlation matrix with a diverging RdBu scale, and for continent-based coloring across all scatter-based views.
+
+\textcolor{blue}{\subsection{Channel Effectiveness Ranking}
+Following Munzner's principles, we prioritized channels as follows:
+\begin{enumerate}
+    \item \textbf{Position}: Used for all primary encodings (scatter X/Y, map geography, PCA embedding)
+    \item \textbf{Length}: Used for bar chart magnitude comparisons
+    \item \textbf{Color Hue}: Used for categorical encoding (continent, government type, clusters)
+    \item \textbf{Color Saturation}: Used for sequential quantitative data (choropleth intensity)
+\end{enumerate}
+We avoided less effective channels like area and angle for quantitative data, as they are harder to perceive accurately.}
+
+\subsection{Interaction Design}
+Linked views support Shneiderman's Visual Information Seeking Mantra~\cite{shneiderman1996} of overview first, zoom and filter, then details-on-demand. The choropleth map provides an overview showing global energy distribution at a glance. Zoom and filter capabilities are provided through the continent dropdown that filters all views and through parallel coordinates brushing that narrows the displayed range. Details-on-demand are available through hover tooltips that reveal exact values and through the linked table that displays brushed country profiles. View linking is achieved by clicking a country on the map, which highlights it in scatter plots, PCA, and parallel coordinates bidirectionally.
+
+
+\textcolor{blue}{\section{Use Case: Energy Analyst Exploration}}
+
+\textcolor{blue}{This section demonstrates an extensive data exploration process conducted by an energy analyst using the tool.}
+
+\subsection{Scenario}
+
+An energy analyst at a policy research institute seeks to understand the relationship between energy production, carbon emissions, and electricity access across different regions. The goal is to identify countries that could serve as models for sustainable energy development.
+
+\subsection{Exploration Process}
+
+The analyst begins by viewing electricity access percentage on the choropleth map in Step 1, the overview (see Figure~\ref{fig:analysis_part1}, top). Immediately visible patterns emerge as Europe and North America show near-universal access represented in deep purple, while Sub-Saharan Africa shows significant gaps shown in yellow. The analyst clicks on several African countries to highlight them for further investigation.
+
+In Step 2, correlation discovery, the analyst switches to the Analytics tab and plots petroleum production in barrels per day on the X-axis against carbon dioxide emissions on the Y-axis (see Figure~\ref{fig:analysis_part1}, bottom). A strong positive correlation is visible. However, the highlighted African countries from Step 1 appear as outliers with low petroleum production but varying emissions. The analyst identifies Nigeria as an exception showing high petroleum production but relatively moderate emissions.
+
+Step 3 involves pattern identification using PCA clustering (see Figure~\ref{fig:analysis_part2}, top). The analyst discovers that countries naturally cluster into three groups. The first cluster in blue contains high-emission industrialized nations including the USA, China, and Russia. The second cluster in green contains moderate energy producers with balanced profiles. The third cluster in orange contains low-access developing nations concentrated in Africa.
+
+In Step 4, detailed comparison, the analyst uses the linked table feature which displays brushed countries from the parallel coordinates view (see Figure~\ref{fig:analysis_part2}). By selecting countries with specific attribute ranges, the table reveals that Norway has high electricity generating capacity but low carbon emissions due to hydropower, while Saudi Arabia shows high petroleum production and proportionally high emissions.
+
+Finally, Step 5 involves multivariate analysis using parallel coordinates (see Figure~\ref{fig:analysis_part3}, top). Brushing to select countries with electricity access above 95 percent and carbon emissions below 100 megatons reveals a subset of nations that achieve high access with low environmental impact including Norway, Sweden, France, and several smaller European nations.
+
+\subsection{Insights Discovered}
+
+Through interactive exploration, the analyst discovered several important findings. First, decoupling energy development from carbon emissions is possible, as several countries achieve near-universal electricity access with low carbon emissions, suggesting that energy development need not be carbon-intensive. Second, regional patterns emerged showing that geographic clustering of energy access gaps aligns with development status but not always with resource availability. Third, trade-offs were identified through the parallel coordinates view (see Figure~\ref{fig:parcoords}), which revealed that natural gas producers often have lower emissions per unit of electricity generation compared to coal producers.
+
+This exploration process demonstrates how linked views and interaction enable hypothesis generation, pattern discovery, and evidence-based insight extraction, tasks that would be extremely difficult with static tables or isolated visualizations.
+
+% NEW FIGURES FOR FINAL REPORT (marked as new content)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth, height=0.4\textheight, keepaspectratio]{analysis_part1_map.png}
+    \caption{Choropleth Map View: Electricity access percentage encoded via sequential color scale (Blues). High-access regions (Europe, North America) appear in dark tones; low-access regions (Sub-Saharan Africa) in yellow. Enables the \textbf{Discover} action on \textbf{Distribution} targets.}
+    \label{fig:analysis_part1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth, height=0.4\textheight, keepaspectratio]{analysis_part2_scatter.png}
+    \caption{Scatter Plot View: Agricultural Land (\%) vs.~Total Area (sq km), colored by government type. Position encoding reveals bivariate relationships. Supports \textbf{Identify} action on \textbf{Correlation} and \textbf{Outlier} targets.}
+    \label{fig:analysis_part2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth, height=0.4\textheight, keepaspectratio]{analysis_part3_pca.png}
+    \caption{PCA Clustering View: Dimensionality reduction from 9 indicators to 2 principal components. K-Means clustering (k=5) reveals natural country groupings. Orange cluster represents developing nations; blue/green clusters represent industrialized economies. Supports \textbf{Derive} action on \textbf{Outlier} targets.}
+    \label{fig:analysis_part3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth, height=0.4\textheight, keepaspectratio]{analysis_parcoords.png}
+    \caption{Parallel Coordinates View: All 6 selected indicators displayed as vertical axes. Interactive brushing enables range-based filtering. Lines represent individual countries; crossing patterns reveal correlations. Supports \textbf{Browse} action on \textbf{Features} targets.}
+    \label{fig:parcoords}
+\end{figure}
+
+\subsection{Future Work}
+
+Several enhancements would strengthen this visualization tool. A temporal slider incorporating historical data would enable time-series comparison to track how countries' energy profiles evolve. Computing derived attributes such as per-capita and efficiency metrics by merging with demographic data would deepen analytical capabilities. Axis reordering allowing users to drag axes in parallel coordinates for correlation-based ordering would improve the multivariate view. Export functionality enabling analysts to export filtered subsets for external analysis would support integration with other tools. Finally, guided tours providing preset exploration paths for common analytical scenarios would help new users learn the system effectively.
+
+\section{Implementation}
+The tool is implemented entirely in Python, using Dash for web-based UI construction and Plotly for interactive visualizations. Data cleaning employs Pandas and regular-expression–based preprocessing. ISO code and continent inference use external libraries such as pycountry, pycountry convert, and gapminder. To achieve Multi View coordination, Dash creates Callbacks that link the state (i.e., clickData, relayoutData, and dcc.Store) of the respective components together. The technical challenges we encountered while developing the system included inconsistent Country names from the CIA database; Missing or Non-numeric; Handling large heterogeneous datasets; Maintaining a uniform display of a stable map (as it would be used from interaction through either brushing methodology); Linking map and scatter selection using ISO-code matching; Designing a Dark-Themed Responsive UI with animated transition, Full-Screen modal, and Vertical Scrollable Containers. The final system integrates all components cohesively while remaining modular for future extension.
+
+\textcolor{blue}{\section{Conclusion and Future Work}}
+
+\textcolor{blue}{\subsection{Summary of Results}}
+
+\textcolor{blue}{This project developed an interactive visualization tool that enables energy analysts to explore the CIA Energy Dataset across 260 countries. The tool successfully supports a hierarchy of analytical tasks from high-level pattern discovery to low-level value retrieval through coordinated multiple views including choropleth maps, scatter plots, parallel coordinates, PCA clustering, and comparison tables.}
+
+\subsection{Benefits and Limitations}
+
+The tool offers several important benefits. Linked views enable seamless exploration from overview to detail, allowing analysts to quickly drill down into specific countries of interest. Multiple visualization idioms support different task types including comparison, correlation analysis, and clustering. Interactive filtering allows hypothesis testing through selection and brushing operations. The dark theme with animations provides a professional and modern user experience.
+
+However, several limitations should be noted. The CIA dataset represents a single point in time, preventing temporal trend analysis that would reveal how energy profiles have changed over years. Approximately 15 percent of country-indicator pairs contain missing values, reducing coverage for some nations. Additionally, the lack of derived metrics such as emissions per capita or emissions per kilowatt-hour limits the depth of analysis, as these ratios would provide additional insight but require external population and GDP data.
+
+\subsection{Reflection on Design Choices}
+
+Our initial choice of a choropleth map proved effective for revealing spatial patterns in electricity access, as the geographic encoding immediately communicated regional disparities. However, for attributes without clear geographic patterns such as natural gas production, a sorted bar chart would be more effective.
+
+The parallel coordinates view, while powerful for multivariate filtering, suffers from axis overlap when all nine indicators are displayed. Allowing users to reorder or subset axes would improve usability. The PCA clustering successfully revealed country groupings but lacks interpretability, and adding loading vectors would help analysts understand which attributes drive cluster separation.
+
+\textcolor{blue}{
+\begin{thebibliography}{00}
+\bibitem{munzner2014} T. Munzner, ``Visualization Analysis and Design,'' A K Peters/CRC Press, 2014.
+\bibitem{shneiderman1996} B. Shneiderman, ``The eyes have it: a task by data type taxonomy for information visualizations,'' in Proceedings 1996 IEEE Symposium on Visual Languages, pp. 336-343, 1996.
+\bibitem{plotly} Plotly Technologies Inc., ``Plotly Python Graphing Library,'' \url{https://plotly.com/python/}, 2024.
+\bibitem{dash} Plotly Technologies Inc., ``Dash: A Python Framework for Building Analytical Web Applications,'' \url{https://dash.plotly.com/}, 2024.
+\bibitem{cia} Central Intelligence Agency, ``The World Factbook,'' \url{https://www.cia.gov/the-world-factbook/}, 2024.
+\bibitem{sklearn} F. Pedregosa et al., ``Scikit-learn: Machine Learning in Python,'' Journal of Machine Learning Research, vol. 12, pp. 2825-2830, 2011. (Used for PCA and K-Means clustering)
+\bibitem{pandas} W. McKinney, ``Data Structures for Statistical Computing in Python,'' in Proceedings of the 9th Python in Science Conference, pp. 51-56, 2010.
+\bibitem{pycountry} ``pycountry: ISO country, subdivision, language, currency and script definitions,'' \url{https://pypi.org/project/pycountry/}, 2024.
+\end{thebibliography}
+}
+
+\end{document}

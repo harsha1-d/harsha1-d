@@ -1,0 +1,47 @@
+Energy Analytics Dashboard: A Step-by-Step Guide for Energy Analysts
+================================================================
+
+Welcome to the Energy Analytics Dashboard. As a developer, I designed this tool to help you uncover patterns, correlations, and outliers in global energy data. Here is how you can use the dashboard effectively:
+
+Step 1: Get Oriented & Select Your Metric
+-----------------------------------------
+When you first open the dashboard, you'll see a high-level view of the world.
+- Use the "Select Indicator" dropdown at the top to choose the primary metric you want to investigate (e.g., CO2 emissions, electricity access, or petroleum usage).
+- Use "Filter by Region" to focus your analysis on a specific continent like "Europe" or "Asia".
+- The KPI cards immediately update to show global/regional statistics for your chosen indicator.
+
+Step 2: Geographic Analysis (The Map Tab)
+------------------------------------------
+The "Map" tab provides a choropleth view.
+- Darker or brighter colors (depending on the scale) represent the intensity of your selected indicator.
+- Hover over any country to see its exact value.
+- Click on a country to highlight it across all other charts in the dashboard. This "Bidirectional Highlighting" is key to multi-view analysis.
+
+Step 3: Bivariate & Trend Analysis (Analytics Tab)
+--------------------------------------------------
+Switch to the "Analytics" tab for deeper dives:
+- Scatter Analysis: Select two different indicators (X and Y axes) to see how they correlate. For example, compare "Real GDP per Capita" vs. "Electricity Access". 
+- Click on any point to see which country it represents.
+- Top-N Ranking: The bar chart shows you the leaders (or laggards) for your selected indicator. You can adjust the "Top N" number to see more or fewer countries.
+
+Step 4: Understanding Relationships (Correlation & Heatmaps)
+----------------------------------------------------------
+- Correlation Heatmap: Select multiple parameters to see a matrix of how they relate. A score near 1.0 indicates a strong positive relationship, while -1.0 indicates a strong inverse relationship.
+- This helps you identify which economic or geographic factors most influence energy consumption.
+
+Step 5: Multivariate Profiling (Parallel Coordinates)
+----------------------------------------------------
+- Parallel Coordinates: This is a powerful tool for finding "country profiles". Each vertical axis is a different metric.
+- Click and drag along any axis (called "Brushing") to filter for countries that meet specific criteria (e.g., "Show me countries with high GDP BUT low CO2 emissions").
+- The "Linked Table" below will automatically list the exact countries that fall within your brushed range.
+
+Step 6: Clustering & Dimensionality (PCA / Clusters Tab)
+-------------------------------------------------------
+- The PCA (Principal Component Analysis) tab uses machine learning to group similar countries together based on all selected parameters.
+- It identifies "natural" clusters of countries that share similar energy profiles, even if they are in different geographic regions.
+
+Pro-Tip: Bidirectional Highlighting
+-----------------------------------
+Remember, clicking a country in the Map, Scatter Plot, or Rank Chart will "lock" that country's highlight across every other visualization. This allows you to track a single country's performance across its geography, its ranking, and its multivariate profile simultaneously.
+
+If you have any questions about the data cleaning or the specific machine learning models used in the PCA, please reach out!
