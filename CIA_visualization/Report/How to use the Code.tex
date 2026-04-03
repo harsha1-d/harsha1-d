@@ -1,0 +1,142 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{float}
+
+\title{Energy Analytics Visualization Tool\\[0.5em]\large Source Code Documentation}
+\author{Harshavardhan Dharman, Surya Kannan,\\Shashank Venkatesha, Leela Karthikeyan Haribabu\\[0.5em]\small Eindhoven University of Technology - Visualization Course (January 2026)}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{How to Run the Tool}
+
+\subsection{Requirements}
+\begin{itemize}
+    \item Python 3.8 or higher
+    \item pip package manager
+\end{itemize}
+
+\subsection{Installation}
+\begin{verbatim}
+pip install -r requirements.txt
+\end{verbatim}
+
+Or install dependencies manually:
+\begin{verbatim}
+pip install dash plotly pandas numpy pycountry pycountry-convert scikit-learn
+\end{verbatim}
+
+\subsection{Running the Application}
+\begin{verbatim}
+python cia_v1.py
+\end{verbatim}
+
+The tool will start at \texttt{http://127.0.0.1:8050}
+
+\subsection{Required Data Files}
+Place these CSV files in the \texttt{Datasets/} folder:
+\begin{itemize}
+    \item \texttt{energyAnalyst.csv} -- Main merged energy dataset (primary)
+    \item \texttt{geography\_data.csv} -- Geographic attributes (Area, Coastline, Land Use)
+    \item \texttt{government\_and\_civics\_data.csv} -- Government type information
+    \item \texttt{energy\_data.csv} -- Raw energy metrics
+    \item \texttt{economy\_data.csv} -- Economic indicators (GDP, Trade)
+    \item \texttt{demographics\_data.csv} -- Population data
+    \item \texttt{transportation\_data.csv} -- Pipeline infrastructure
+    \item \texttt{communications\_data.csv} -- Communications metrics
+\end{itemize}
+
+\section{What We Implemented Ourselves}
+
+The following components were developed entirely by our team:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}p{4cm}p{9cm}@{}}
+\toprule
+\textbf{Component} & \textbf{Description} \\
+\midrule
+Data Cleaning Pipeline & Custom regex-based normalization of CIA dataset values (units, currencies, missing values) in \texttt{clean\_numeric\_column()} function \\
+\addlinespace
+Country Name Matching & Manual mapping table (\texttt{CIA\_NAME\_FIXES}) resolving 30+ naming discrepancies between CIA and Gapminder databases \\
+\addlinespace
+ISO Code Resolution & Fallback lookup using pycountry with fuzzy matching and manual overrides for edge cases \\
+\addlinespace
+Coordinated Multiple Views & Bidirectional click/brush synchronization across 6+ visualizations using Dash callbacks and \texttt{dcc.Store} state management \\
+\addlinespace
+Parallel Coordinates Brushing & Custom constraint extraction from \texttt{restyleData} events and linked table filtering logic \\
+\addlinespace
+PCA + K-Means Integration & Custom wrapper around sklearn with dynamic parameter selection and cluster coloring \\
+\addlinespace
+Dark Theme UI & Custom CSS for scrollbars, dropdowns, panels, hover effects, and animations \\
+\addlinespace
+State Management & Cross-callback synchronization using \texttt{dcc.Store} for selections, brushes, and region filters \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{External Libraries Used}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lp{10cm}@{}}
+\toprule
+\textbf{Library} & \textbf{Purpose} \\
+\midrule
+Dash & Web application framework for building the interactive UI \\
+Plotly & Visualization rendering (choropleth, scatter, bar, parallel coordinates, PCA plots) \\
+Pandas & Data manipulation and CSV loading \\
+NumPy & Numeric operations and array handling \\
+scikit-learn & PCA dimensionality reduction and K-Means clustering algorithms \\
+pycountry & ISO alpha-3 country code lookups \\
+pycountry-convert & Continent inference from country codes \\
+gapminder & Country name standardization reference \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Project Structure}
+
+\begin{verbatim}
+Vis/
++-- cia_v1.py                  # Main application 
++-- ReadMe.md                  # Documentation
++-- requirements.txt           # Python dependencies
++-- Datasets/                  # 9 CSV data files
+|   +-- energyAnalyst.csv      # Primary merged dataset
+|   +-- geography_data.csv
+|   +-- government_and_civics_data.csv
+|   +-- energy_data.csv
+|   +-- economy_data.csv
+|   +-- demographics_data.csv
+|   +-- transportation_data.csv
+|   +-- communications_data.csv
++-- Report/                    # Academic report files
+\end{verbatim}
+
+\section{Code Quality}
+
+\begin{itemize}
+    \item \textbf{Comments:} Rich inline comments and section headers throughout
+    \item \textbf{Modularity:} 65+ functions extracted for reusability
+    \item \textbf{Docstring:} Comprehensive module docstring (lines 1--36) explaining features, usage, and dependencies
+\end{itemize}
+
+\section{Features}
+
+\begin{itemize}
+    \item \textbf{Choropleth Map:} Global energy indicator distributions
+    \item \textbf{Scatter Plot:} Bivariate relationships with dynamic X/Y axis
+    \item \textbf{Bar Chart Rankings:} Top-N countries for any indicator
+    \item \textbf{Correlation Heatmap:} Pairwise correlations between indicators
+    \item \textbf{Parallel Coordinates:} Multivariate exploration with brushing
+    \item \textbf{PCA \& K-Means:} Automated country clustering
+    \item \textbf{Bidirectional Highlighting:} Click to highlight across all views
+    \item \textbf{Region Filtering:} Filter by continent
+\end{itemize}
+
+\end{document}
