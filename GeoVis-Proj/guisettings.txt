@@ -1,0 +1,8 @@
+#
+#Tue Mar 31 14:14:25 CEST 2026
+autoExportSolutions=false
+connectionString=https\://catvis.win.tue.nl/2img15/submit/
+exportPath=C\:\\Users\\gauth\\Downloads\\GeoVis Contest Solutions
+problemPath=C\:\\Users\\Harshas\\Downloads\\2025-live
+sharedSecret=QwertyAbcd123
+teamName=Team16
