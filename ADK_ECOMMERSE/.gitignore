@@ -1,0 +1,8 @@
+.adk/
+.venv/
+.venv_tmp/
+.venv_build_tmp/
+__pycache__/
+*.py[cod]
+*.log
+.env
