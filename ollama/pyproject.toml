@@ -1,0 +1,18 @@
+[project]
+name = "ollama-beginners-series"
+version = "0.1.0"
+description = "A minimal Ollama Python example project for local model generation."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.32.4",
+    "streamlit>=1.0.0",
+]
+
+[project.scripts]
+basic = "basic:main"
+chat = "chat:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,8 @@
+{
+  "name": "ollama-beginners-series",
+  "version": "0.1.0",
+  "python": ">=3.11",
+  "dependencies": {
+    "requests": "^2.32.4"
+  }
+}
